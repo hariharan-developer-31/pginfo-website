@@ -1,26 +1,128 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --primary-blue: #4f8dfd;
+  --secondary-blue: #5fa0ff;
+  --deep-blue: #3f7ef5;
+  --light-bg-blue: #f3f8ff;
+  --soft-white: #ffffff;
+  --light-border-blue: #d9e7ff;
+  --text-dark: #1f2d3d;
+  --soft-gray-text: #6b7a90;
+  --orange-accent: #ffb020;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--soft-white);
+  --color-foreground: var(--text-dark);
+  --font-sans: var(--font-inter);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  min-height: 100vh;
+  background: var(--soft-white);
+  color: var(--text-dark);
+  font-family: var(--font-inter), sans-serif;
+}
+
+main {
+  position: relative;
+  overflow-x: clip;
+}
+
+::selection {
+  color: var(--text-dark);
+  background: color-mix(in srgb, var(--primary-blue) 24%, white);
+}
+
+.glass-card {
+  border: 1px solid color-mix(in srgb, var(--light-border-blue) 78%, white);
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 25px 60px -40px rgba(63, 126, 245, 0.45);
+  backdrop-filter: blur(16px);
+}
+
+.gradient-button {
+  background-image: linear-gradient(
+    135deg,
+    var(--primary-blue),
+    var(--secondary-blue)
+  );
+  color: var(--soft-white);
+  box-shadow: 0 14px 32px -16px rgba(63, 126, 245, 0.6);
+}
+
+.gradient-button:hover {
+  background-image: linear-gradient(135deg, var(--deep-blue), var(--primary-blue));
+}
+
+.secondary-button {
+  border: 1px solid var(--light-border-blue);
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--text-dark);
+  backdrop-filter: blur(10px);
+}
+
+.blue-grid {
+  background-image:
+    linear-gradient(rgba(79, 141, 253, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(79, 141, 253, 0.08) 1px, transparent 1px);
+  background-size: 42px 42px;
+}
+
+.wave-separator {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  pointer-events: none;
+}
+
+.wave-separator svg {
+  display: block;
+  width: 100%;
+  height: 82px;
+}
+
+.hero-noise::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.14;
+  background-image: radial-gradient(rgba(95, 160, 255, 0.26) 1px, transparent 1px);
+  background-size: 24px 24px;
+  pointer-events: none;
+}
+
+.glow-spot {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(68px);
+  pointer-events: none;
+}
+
+.section-title {
+  font-size: clamp(1.9rem, 2.8vw, 2.85rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.section-copy {
+  color: var(--soft-gray-text);
+  max-width: 44rem;
+  line-height: 1.75;
+}
+
+@media (max-width: 768px) {
+  .wave-separator svg {
+    height: 58px;
+  }
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion, useInView, useScroll, useTransform } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowRight,
   BarChart3,
@@ -11,9 +11,7 @@ import {
   ChevronDown,
   CircleHelp,
   ClipboardList,
-  Clock3,
   CreditCard,
-  Headset,
   LayoutDashboard,
   LucideIcon,
   Menu,
@@ -23,9 +21,7 @@ import {
   Phone,
   ShieldCheck,
   Smartphone,
-  Sparkles,
   Star,
-  TrendingUp,
   Users,
   Utensils,
   Wallet,
@@ -33,13 +29,7 @@ import {
   Zap,
 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
-
-type CounterItem = {
-  label: string;
-  value: number;
-  suffix: string;
-};
+import { Fragment, useEffect, useMemo, useState } from "react";
 
 type ProblemItem = {
   title: string;
@@ -70,13 +60,6 @@ const navLinks = [
   { id: "testimonials", label: "Testimonials" },
   { id: "faq", label: "FAQ" },
   { id: "contact", label: "Contact" },
-];
-
-const counters: CounterItem[] = [
-  { label: "Beds Managed", value: 10000, suffix: "+" },
-  { label: "PG Owners", value: 500, suffix: "+" },
-  { label: "Rent Collection Success", value: 98, suffix: "%" },
-  { label: "Customer Support", value: 24, suffix: "/7" },
 ];
 
 const problems: ProblemItem[] = [
@@ -282,21 +265,21 @@ const features: FeatureItem[] = [
 
 const plans: PlanItem[] = [
   {
-    name: "Starter",
-    price: "₹1,999/mo",
-    description: "Best for single PG properties starting digital operations.",
+    name: "Launch Pack",
+    price: "INR 24,999",
+    description: "One-time onboarding package for single-property operators.",
     features: [
       "Up to 100 beds",
       "Tenant and room management",
       "Rent reminders",
       "Basic reports",
-      "Email support",
+      "1-time setup and training",
     ],
   },
   {
-    name: "Professional",
-    price: "₹4,999/mo",
-    description: "Built for growing PG owners with branch and automation needs.",
+    name: "Growth License",
+    price: "INR 79,000",
+    description: "Annual license for multi-branch growth and automation.",
     features: [
       "Up to 500 beds",
       "Electricity and mess management",
@@ -307,9 +290,9 @@ const plans: PlanItem[] = [
     popular: true,
   },
   {
-    name: "Enterprise",
+    name: "Enterprise Contract",
     price: "Custom",
-    description: "For large operators needing scale, controls, and integrations.",
+    description: "Custom scope, rollout, and support model for large operators.",
     features: [
       "Unlimited beds and branches",
       "Custom workflows",
@@ -319,7 +302,6 @@ const plans: PlanItem[] = [
     ],
   },
 ];
-
 const faqs = [
   {
     question: "Is setup easy?",
@@ -393,117 +375,8 @@ const stagger = {
   },
 } as const;
 
-const particles = [
-  { left: "8%", top: "18%", size: 10, duration: 5.8, delay: 0.3 },
-  { left: "16%", top: "42%", size: 7, duration: 5.2, delay: 0.9 },
-  { left: "32%", top: "28%", size: 8, duration: 6, delay: 0.4 },
-  { left: "47%", top: "8%", size: 9, duration: 6.2, delay: 1.1 },
-  { left: "58%", top: "36%", size: 7, duration: 5.7, delay: 0.8 },
-  { left: "72%", top: "16%", size: 10, duration: 5.5, delay: 0.2 },
-  { left: "86%", top: "34%", size: 8, duration: 6.4, delay: 0.6 },
-  { left: "76%", top: "62%", size: 10, duration: 5.9, delay: 1.2 },
-  { left: "62%", top: "76%", size: 7, duration: 5.6, delay: 0.5 },
-  { left: "42%", top: "72%", size: 8, duration: 6.1, delay: 0.1 },
-  { left: "24%", top: "64%", size: 9, duration: 6.3, delay: 0.9 },
-  { left: "10%", top: "78%", size: 8, duration: 5.4, delay: 1.3 },
-];
-
 function cn(...parts: Array<string | false | null | undefined>) {
   return parts.filter(Boolean).join(" ");
-}
-
-function AnimatedCounter({ value, suffix, label }: CounterItem) {
-  const ref = useRef<HTMLDivElement | null>(null);
-  const inView = useInView(ref, { once: true, amount: 0.6 });
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    if (!inView) {
-      return;
-    }
-
-    let frame = 0;
-    let startTime = 0;
-
-    const animate = (time: number) => {
-      if (!startTime) {
-        startTime = time;
-      }
-
-      const progress = Math.min((time - startTime) / 1400, 1);
-      const next = Math.floor(progress * value);
-      setCount(next);
-
-      if (progress < 1) {
-        frame = window.requestAnimationFrame(animate);
-      }
-    };
-
-    frame = window.requestAnimationFrame(animate);
-    return () => window.cancelAnimationFrame(frame);
-  }, [inView, value]);
-
-  const formatted = value >= 1000 ? count.toLocaleString("en-IN") : String(count);
-
-  return (
-    <motion.div
-      ref={ref}
-      variants={fadeUp}
-      className="glass-card rounded-3xl p-6 text-center transition-transform duration-300 hover:-translate-y-1"
-    >
-      <div className="text-3xl font-semibold tracking-tight text-[#1F2D3D] md:text-4xl">
-        {formatted}
-        {inView ? suffix : ""}
-      </div>
-      <p className="mt-2 text-sm text-[#6B7A90] md:text-base">{label}</p>
-    </motion.div>
-  );
-}
-
-function FloatingParticles() {
-  return (
-    <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-      {particles.map((particle) => (
-        <motion.span
-          key={`${particle.left}-${particle.top}`}
-          className="absolute rounded-full bg-[#5FA0FF]/45"
-          style={{
-            left: particle.left,
-            top: particle.top,
-            width: particle.size,
-            height: particle.size,
-          }}
-          animate={{
-            y: [0, -14, 0],
-            opacity: [0.25, 0.7, 0.25],
-            scale: [1, 1.16, 1],
-          }}
-          transition={{
-            duration: particle.duration,
-            delay: particle.delay,
-            repeat: Number.POSITIVE_INFINITY,
-            ease: "easeInOut",
-          }}
-        />
-      ))}
-
-      <motion.div
-        className="glow-spot left-[-8rem] top-14 h-72 w-72 bg-[#5FA0FF]/35"
-        animate={{ x: [0, 40, 0], y: [0, -20, 0] }}
-        transition={{ duration: 12, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-      />
-      <motion.div
-        className="glow-spot right-[-10rem] top-42 h-80 w-80 bg-[#4F8DFD]/35"
-        animate={{ x: [0, -35, 0], y: [0, 18, 0] }}
-        transition={{ duration: 13, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-      />
-      <motion.div
-        className="glow-spot bottom-[-12rem] left-1/4 h-80 w-80 bg-[#3F7EF5]/20"
-        animate={{ x: [0, 28, 0], y: [0, -24, 0] }}
-        transition={{ duration: 14, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-      />
-    </div>
-  );
 }
 
 function Wave({ className }: { className?: string }) {
@@ -525,13 +398,6 @@ export default function Home() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [faqOpen, setFaqOpen] = useState<number | null>(0);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
-
-  const heroRef = useRef<HTMLElement | null>(null);
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ["start start", "end start"],
-  });
-  const heroY = useTransform(scrollYProgress, [0, 1], [0, 90]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -563,7 +429,7 @@ export default function Home() {
             : "bg-transparent",
         )}
       >
-        <div className="mx-auto flex h-20 w-full max-w-7xl items-center justify-between px-6 md:px-8">
+        <div className="mx-auto flex h-20 w-full max-w-[1700px] items-center justify-between px-6 md:px-8">
           <Link href="#" className="flex items-center gap-3 text-[#1F2D3D]">
             <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#4F8DFD] to-[#5FA0FF] text-white shadow-[0_15px_30px_-15px_rgba(63,126,245,0.8)]">
               <Building2 className="h-5 w-5" />
@@ -619,7 +485,7 @@ export default function Home() {
               exit={{ opacity: 0, y: -8 }}
               className="border-t border-[#D9E7FF]/70 bg-white/95 px-6 py-5 backdrop-blur-xl lg:hidden"
             >
-              <div className="mx-auto flex max-w-7xl flex-col gap-3">
+              <div className="mx-auto flex max-w-[1700px] flex-col gap-3">
                 {navLinks.map((link) => (
                   <a
                     key={link.id}
@@ -649,57 +515,53 @@ export default function Home() {
           )}
         </AnimatePresence>
       </header>
+      <section className="hero-noise relative isolate min-h-[86svh] overflow-hidden bg-gradient-to-b from-[#F3F8FF] via-white to-white pt-28 md:pt-32">
+        <div className="pointer-events-none absolute inset-0 -z-10">
+          <div className="absolute left-1/2 top-8 h-[28rem] w-[28rem] -translate-x-1/2 rounded-full bg-[#4F8DFD]/12 blur-[115px]" />
+          <motion.div
+            className="absolute left-1/2 top-8 h-[28rem] w-[28rem] -translate-x-1/2 rounded-full border border-[#CFE0FF]/55"
+            animate={{ opacity: [0.35, 0.55, 0.35] }}
+            transition={{ duration: 3.8, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
+          />
+          <div className="absolute -left-28 top-36 h-72 w-72 rounded-full bg-[#5FA0FF]/12 blur-[120px]" />
+          <div className="absolute -right-28 top-36 h-72 w-72 rounded-full bg-[#3F7EF5]/10 blur-[120px]" />
+        </div>
 
-      <section
-        ref={heroRef}
-        className="hero-noise relative isolate min-h-screen overflow-hidden bg-gradient-to-b from-[#F3F8FF] via-white to-white pt-28"
-      >
-        <FloatingParticles />
-        <motion.div
-          className="pointer-events-none absolute inset-0 -z-10"
-          style={{ y: heroY }}
-        >
-          <div className="absolute left-1/2 top-0 h-[28rem] w-[28rem] -translate-x-1/2 rounded-full bg-[#4F8DFD]/20 blur-[110px]" />
-          <div className="absolute -left-20 top-48 h-[20rem] w-[20rem] rounded-full bg-[#5FA0FF]/20 blur-[100px]" />
-          <div className="absolute -right-24 top-56 h-[22rem] w-[22rem] rounded-full bg-[#3F7EF5]/18 blur-[110px]" />
-        </motion.div>
-
-        <div className="mx-auto grid w-full max-w-7xl items-center gap-14 px-6 pb-20 pt-10 md:px-8 lg:grid-cols-[1.1fr_1fr] lg:pb-28">
+        <div className="mx-auto w-full max-w-[1700px] px-6 pb-20 pt-12 md:px-10 2xl:px-16">
           <motion.div
             initial="hidden"
             animate="show"
             variants={stagger}
-            className="relative z-10"
+            className="mx-auto max-w-4xl rounded-[2rem] border border-[#DCE9FF] bg-white/78 px-6 py-12 text-center shadow-[0_22px_55px_-36px_rgba(63,126,245,0.45)] backdrop-blur-sm sm:px-10 md:py-14"
           >
-            <motion.div
+            <motion.p
               variants={fadeUp}
-              className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#D9E7FF] bg-white/85 px-4 py-2 text-sm text-[#3F7EF5] backdrop-blur"
+              className="mx-auto mb-5 inline-flex rounded-full border border-[#CFE0FF] bg-[#F4F8FF] px-4 py-1.5 text-[11px] font-semibold tracking-[0.14em] text-[#3F7EF5]"
             >
-              <Sparkles className="h-4 w-4" />
-              Built for modern PG owners
-            </motion.div>
+              PG MANAGER PRO
+            </motion.p>
 
             <motion.h1
               variants={fadeUp}
-              className="text-4xl font-semibold tracking-tight text-[#1F2D3D] sm:text-5xl lg:text-[3.45rem] lg:leading-[1.08]"
+              className="text-balance text-3xl font-semibold tracking-tight text-[#1F2D3D] sm:text-[2.55rem] sm:leading-[1.18] lg:text-5xl"
             >
               Smart PG Management Made Simple
             </motion.h1>
 
             <motion.p
               variants={fadeUp}
-              className="mt-6 max-w-2xl text-base leading-8 text-[#6B7A90] sm:text-lg"
+              className="mx-auto mt-5 max-w-3xl text-pretty text-base leading-8 text-[#6B7A90] sm:text-lg"
             >
-              Manage rooms, tenants, rent collection, complaints, electricity bills and operations
-              from one powerful dashboard.
+              Manage rooms, tenants, rent collection, complaints, electricity bills, staff, and
+              operations from one modern control center built for PG owners.
             </motion.p>
 
-            <motion.div variants={fadeUp} className="mt-9 flex flex-wrap items-center gap-3">
+            <motion.div variants={fadeUp} className="mt-9 flex flex-wrap items-center justify-center gap-3">
               <motion.a
                 href="#contact"
                 whileHover={{ y: -2 }}
                 whileTap={{ scale: 0.98 }}
-                className="gradient-button rounded-xl px-6 py-3 text-sm font-semibold sm:text-base"
+                className="gradient-button rounded-xl px-7 py-3.5 text-sm font-semibold sm:text-base"
               >
                 Book Free Demo
               </motion.a>
@@ -707,148 +569,28 @@ export default function Home() {
                 href="#features"
                 whileHover={{ y: -2 }}
                 whileTap={{ scale: 0.98 }}
-                className="secondary-button inline-flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold sm:text-base"
+                className="secondary-button inline-flex items-center gap-2 rounded-xl px-7 py-3.5 text-sm font-semibold sm:text-base"
               >
                 Explore Features
                 <ArrowRight className="h-4 w-4" />
               </motion.a>
             </motion.div>
 
-            <motion.div variants={fadeUp} className="mt-8 flex flex-wrap gap-3 text-sm text-[#1F2D3D]">
-              <span className="glass-card inline-flex items-center gap-2 rounded-full px-4 py-2">
-                <ShieldCheck className="h-4 w-4 text-[#3F7EF5]" />
-                Trusted by PG Owners
-              </span>
-              <span className="glass-card inline-flex items-center gap-2 rounded-full px-4 py-2">
-                <Headset className="h-4 w-4 text-[#3F7EF5]" />
-                24/7 Support
-              </span>
-              <span className="glass-card inline-flex items-center gap-2 rounded-full px-4 py-2">
-                <Clock3 className="h-4 w-4 text-[#3F7EF5]" />
-                Easy Setup
-              </span>
-            </motion.div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 36 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.85, ease: "easeOut", delay: 0.15 }}
-            className="relative z-10"
-          >
-            <motion.div
-              animate={{ y: [0, -12, 0] }}
-              transition={{ duration: 6, ease: "easeInOut", repeat: Number.POSITIVE_INFINITY }}
-              className="glass-card relative overflow-hidden rounded-[1.9rem] p-6 shadow-[0_40px_90px_-55px_rgba(63,126,245,0.75)]"
-            >
-              <div className="absolute inset-0 blue-grid opacity-65" />
-              <div className="relative z-10 space-y-5">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.12em] text-[#6B7A90]">Overview</p>
-                    <p className="mt-1 text-lg font-semibold text-[#1F2D3D]">PG Dashboard</p>
-                  </div>
-                  <span className="rounded-full bg-[#4F8DFD]/15 px-3 py-1 text-xs font-medium text-[#3F7EF5]">
-                    Live
-                  </span>
-                </div>
-
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <div className="rounded-2xl border border-[#D9E7FF] bg-white/90 p-4">
-                    <p className="text-xs text-[#6B7A90]">Occupancy</p>
-                    <p className="mt-2 text-2xl font-semibold text-[#1F2D3D]">92%</p>
-                    <div className="mt-2 h-2 rounded-full bg-[#E8F0FF]">
-                      <div className="h-full w-[92%] rounded-full bg-gradient-to-r from-[#4F8DFD] to-[#5FA0FF]" />
-                    </div>
-                  </div>
-                  <div className="rounded-2xl border border-[#D9E7FF] bg-white/90 p-4">
-                    <p className="text-xs text-[#6B7A90]">Rent Collection</p>
-                    <p className="mt-2 text-2xl font-semibold text-[#1F2D3D]">98%</p>
-                    <div className="mt-2 flex items-end gap-1.5">
-                      {[45, 62, 80, 68, 95].map((height, index) => (
-                        <span
-                          key={`rent-bar-${height}-${index}`}
-                          className="w-2 rounded-full bg-[#5FA0FF]/80"
-                          style={{ height }}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="rounded-2xl border border-[#D9E7FF] bg-white/90 p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium">Tenant Snapshot</p>
-                      <p className="text-xs text-[#6B7A90]">Room A-204 • Paid</p>
-                    </div>
-                    <span className="rounded-full bg-[#4F8DFD]/15 px-2.5 py-1 text-xs text-[#3F7EF5]">
-                      Active
-                    </span>
-                  </div>
-                  <div className="mt-4 grid grid-cols-3 gap-2 text-center text-xs">
-                    <div className="rounded-xl bg-[#F3F8FF] px-2 py-3">
-                      Complaints
-                      <p className="mt-1 text-base font-semibold text-[#1F2D3D]">04</p>
-                    </div>
-                    <div className="rounded-xl bg-[#F3F8FF] px-2 py-3">
-                      Pending
-                      <p className="mt-1 text-base font-semibold text-[#1F2D3D]">12</p>
-                    </div>
-                    <div className="rounded-xl bg-[#F3F8FF] px-2 py-3">
-                      Revenue
-                      <p className="mt-1 text-base font-semibold text-[#1F2D3D]">₹4.8L</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            <motion.div
-              animate={{ y: [0, -8, 0] }}
-              transition={{ duration: 4.6, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-              className="glass-card absolute -left-6 top-[18%] hidden rounded-2xl px-4 py-3 text-xs text-[#3F7EF5] shadow-[0_20px_35px_-30px_rgba(63,126,245,0.8)] sm:block"
-            >
-              <div className="flex items-center gap-2">
-                <TrendingUp className="h-4 w-4" />
-                +14% monthly growth
-              </div>
-            </motion.div>
-            <motion.div
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 5.1, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut", delay: 0.6 }}
-              className="glass-card absolute -right-8 bottom-[14%] hidden rounded-2xl px-4 py-3 text-xs text-[#3F7EF5] shadow-[0_20px_35px_-30px_rgba(63,126,245,0.8)] sm:block"
-            >
-              <div className="flex items-center gap-2">
-                <BellRing className="h-4 w-4" />
-                23 reminders sent today
-              </div>
+            <motion.div variants={fadeUp} className="mt-8 flex flex-wrap items-center justify-center gap-2 text-xs text-[#42546C] sm:text-sm">
+              {["Tenant Management", "Rent Automation", "Multi-Branch Control"].map((item) => (
+                <span key={item} className="rounded-full border border-[#D9E7FF] bg-white px-3 py-1.5">
+                  {item}
+                </span>
+              ))}
             </motion.div>
           </motion.div>
         </div>
 
         <Wave className="bottom-0" />
       </section>
-
-      <section className="relative bg-[#F3F8FF] py-20">
-        <div className="mx-auto w-full max-w-7xl px-6 md:px-8">
-          <motion.div
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.35 }}
-            variants={stagger}
-            className="grid gap-4 md:grid-cols-2 xl:grid-cols-4"
-          >
-            {counters.map((counter) => (
-              <AnimatedCounter key={counter.label} {...counter} />
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
       <section className="relative overflow-hidden bg-white py-24">
         <div className="glow-spot left-[-7rem] top-32 h-72 w-72 bg-[#5FA0FF]/18" />
-        <div className="mx-auto w-full max-w-7xl px-6 md:px-8">
+        <div className="mx-auto w-full max-w-[1700px] px-6 md:px-8">
           <motion.div
             initial="hidden"
             whileInView="show"
@@ -903,7 +645,7 @@ export default function Home() {
       </section>
 
       <section className="relative bg-[#F3F8FF] py-24" id="features">
-        <div className="mx-auto w-full max-w-7xl px-6 md:px-8">
+        <div className="mx-auto w-full max-w-[1700px] px-6 md:px-10 2xl:px-16">
           <motion.div
             initial="hidden"
             whileInView="show"
@@ -917,94 +659,106 @@ export default function Home() {
               One Smart Platform To Manage Everything
             </motion.h2>
             <motion.p variants={fadeUp} className="section-copy mt-4 text-base">
-              As you scroll, the dashboard stays visible while every core capability appears around it.
-              This gives a quick visual understanding of how operations fit together.
+              Every core workflow is connected in one white, clean, neon-guided control surface.
+              No confusion, no overlap, and instant clarity for day-to-day operations.
             </motion.p>
 
-            <div className="mt-14 grid gap-8 lg:grid-cols-[1fr_1.1fr]">
-              <div className="lg:sticky lg:top-28 lg:h-fit">
-                <motion.div
-                  whileHover={{ y: -4 }}
-                  className="glass-card relative overflow-hidden rounded-[2rem] p-6"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-br from-white via-[#F7FAFF] to-[#EAF2FF]" />
-                  <div className="relative z-10">
-                    <div className="mb-5 flex items-center justify-between">
-                      <div>
-                        <p className="text-xs uppercase tracking-[0.15em] text-[#6B7A90]">Live Control</p>
-                        <p className="mt-1 text-lg font-semibold">Operations Cockpit</p>
-                      </div>
-                      <span className="rounded-full bg-[#4F8DFD]/15 px-3 py-1 text-xs text-[#3F7EF5]">
-                        Unified
-                      </span>
+            <div className="mt-14 grid gap-8 xl:grid-cols-[1.15fr_0.85fr]">
+              <motion.div
+                variants={fadeUp}
+                whileHover={{ y: -4 }}
+                className="glass-card neon-card relative overflow-hidden rounded-[2rem] p-6 md:p-8"
+              >
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(95,160,255,0.16),transparent_45%),radial-gradient(circle_at_85%_75%,rgba(79,141,253,0.16),transparent_50%)]" />
+                <div className="relative z-10">
+                  <div className="mb-6 flex items-center justify-between gap-3">
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.15em] text-[#6B7A90]">Unified Workspace</p>
+                      <p className="mt-1 text-xl font-semibold text-[#1F2D3D]">Operations Control Matrix</p>
                     </div>
-
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      <div className="rounded-2xl border border-[#D9E7FF] bg-white p-4">
-                        <p className="text-xs text-[#6B7A90]">Collected This Month</p>
-                        <p className="mt-2 text-xl font-semibold">₹12.4L</p>
-                      </div>
-                      <div className="rounded-2xl border border-[#D9E7FF] bg-white p-4">
-                        <p className="text-xs text-[#6B7A90]">Open Complaints</p>
-                        <p className="mt-2 text-xl font-semibold">7 tickets</p>
-                      </div>
-                    </div>
-
-                    <div className="mt-4 rounded-2xl border border-[#D9E7FF] bg-white p-4">
-                      <p className="text-xs text-[#6B7A90]">Branch Health</p>
-                      <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
-                        {["North", "Central", "South"].map((branch, index) => (
-                          <div key={branch} className="rounded-xl bg-[#F3F8FF] p-3 text-center">
-                            <p>{branch}</p>
-                            <p className="mt-1 text-base font-semibold">{90 - index * 7}%</p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+                    <span className="rounded-full border border-[#BFD5FF] bg-white px-3 py-1 text-xs font-medium text-[#3F7EF5]">
+                      Live Sync
+                    </span>
                   </div>
 
-                  {solutionHighlights.map((item, index) => (
-                    <motion.span
-                      key={item}
-                      className="pointer-events-none absolute hidden rounded-full border border-[#D9E7FF] bg-white/90 px-3 py-1 text-xs text-[#3F7EF5] shadow-md xl:block"
-                      style={{
-                        top: ["10%", "23%", "37%", "52%", "67%", "82%"][index],
-                        left: index % 2 === 0 ? "-8%" : "83%",
-                      }}
-                      animate={{ y: [0, -9, 0] }}
-                      transition={{
-                        duration: 4.5 + index * 0.35,
-                        repeat: Number.POSITIVE_INFINITY,
-                        ease: "easeInOut",
-                      }}
-                    >
-                      {item}
-                    </motion.span>
-                  ))}
-                </motion.div>
-              </div>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {solutionHighlights.map((item, index) => (
+                      <motion.div
+                        key={item}
+                        animate={{ y: [0, -4, 0] }}
+                        transition={{
+                          duration: 3.6 + index * 0.2,
+                          repeat: Number.POSITIVE_INFINITY,
+                          ease: "easeInOut",
+                        }}
+                        className="rounded-2xl border border-[#CFE0FF] bg-white/95 p-4 shadow-[0_0_0_1px_rgba(95,160,255,0.05),0_12px_30px_-18px_rgba(79,141,253,0.5)]"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-[#EAF2FF] text-xs font-semibold text-[#3F7EF5]">
+                            {index + 1}
+                          </span>
+                          <p className="text-sm font-semibold text-[#1F2D3D]">{item}</p>
+                        </div>
+                        <div className="mt-3 h-1.5 rounded-full bg-[#E6EFFF]">
+                          <div
+                            className="h-full rounded-full bg-gradient-to-r from-[#4F8DFD] to-[#5FA0FF]"
+                            style={{ width: `${72 + index * 4}%` }}
+                          />
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
 
-              <motion.div variants={stagger} className="space-y-5">
-                {solutionHighlights.map((item, index) => (
+                  <div className="mt-6 grid gap-3 sm:grid-cols-3">
+                    {[
+                      { label: "Collections", value: "98%" },
+                      { label: "Occupancy", value: "92%" },
+                      { label: "Response", value: "1.2 hr" },
+                    ].map((item) => (
+                      <div
+                        key={item.label}
+                        className="rounded-xl border border-[#D9E7FF] bg-white/90 px-4 py-3 text-center"
+                      >
+                        <p className="text-xs text-[#6B7A90]">{item.label}</p>
+                        <p className="mt-1 text-lg font-semibold text-[#1F2D3D]">{item.value}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div variants={stagger} className="space-y-4">
+                {[
+                  {
+                    title: "Centralized command",
+                    copy: "Track tenant, room, and billing status across all properties in one view.",
+                  },
+                  {
+                    title: "Neon activity rails",
+                    copy: "Key actions pulse in real time, so your team sees what needs attention first.",
+                  },
+                  {
+                    title: "Action-first clarity",
+                    copy: "Each card explains exactly what to do next, reducing dependency on spreadsheets.",
+                  },
+                ].map((item, index) => (
                   <motion.article
-                    key={item}
+                    key={item.title}
                     variants={{
-                      hidden: { opacity: 0, x: index % 2 === 0 ? 28 : -28, y: 22 },
+                      hidden: { opacity: 0, x: 20, y: 20 },
                       show: {
                         opacity: 1,
                         x: 0,
                         y: 0,
-                        transition: { duration: 0.62, ease: "easeOut" },
+                        transition: { duration: 0.55, ease: "easeOut" },
                       },
                     }}
                     whileHover={{ y: -4 }}
-                    className="glass-card rounded-3xl p-5"
+                    className="glass-card neon-card rounded-3xl p-5"
                   >
-                    <p className="text-xs uppercase tracking-[0.15em] text-[#6B7A90]">Feature {index + 1}</p>
-                    <h3 className="mt-2 text-lg font-semibold text-[#1F2D3D]">{item}</h3>
-                    <p className="mt-1 text-sm leading-7 text-[#6B7A90]">
-                      Connected to your central dashboard so nothing is missed across daily operations.
-                    </p>
+                    <p className="text-xs uppercase tracking-[0.15em] text-[#6B7A90]">Layer {index + 1}</p>
+                    <h3 className="mt-2 text-lg font-semibold text-[#1F2D3D]">{item.title}</h3>
+                    <p className="mt-2 text-sm leading-7 text-[#6B7A90]">{item.copy}</p>
                   </motion.article>
                 ))}
               </motion.div>
@@ -1012,9 +766,8 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
-
       <section className="relative overflow-hidden bg-white py-24">
-        <div className="mx-auto w-full max-w-7xl px-6 md:px-8">
+        <div className="mx-auto w-full max-w-[1700px] px-6 md:px-8">
           <motion.div
             initial="hidden"
             whileInView="show"
@@ -1103,7 +856,7 @@ export default function Home() {
       </section>
 
       <section className="relative bg-[#F3F8FF] py-24">
-        <div className="mx-auto w-full max-w-7xl px-6 md:px-8">
+        <div className="mx-auto w-full max-w-[1700px] px-6 md:px-10 2xl:px-16">
           <motion.div
             initial="hidden"
             whileInView="show"
@@ -1117,43 +870,64 @@ export default function Home() {
               Start in 3 Simple Steps
             </motion.h2>
 
-            <div className="relative mt-12 grid gap-6 md:grid-cols-3">
-              <div className="absolute left-6 top-0 h-full w-px bg-gradient-to-b from-[#4F8DFD] to-[#D9E7FF] md:hidden" />
-              <div className="absolute left-0 top-8 hidden h-px w-full bg-gradient-to-r from-[#4F8DFD] via-[#5FA0FF] to-[#D9E7FF] md:block" />
+            <div className="relative mt-12">
+              <div className="grid gap-6 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)_auto_minmax(0,1fr)] md:items-stretch">
+                {[
+                  {
+                    title: "Add your PG",
+                    description: "Create branches, room structures, and initial setup in guided steps.",
+                  },
+                  {
+                    title: "Manage tenants and operations",
+                    description: "Track occupancy, rent, bills, complaints, and daily activities from one dashboard.",
+                  },
+                  {
+                    title: "Automate and grow your business",
+                    description: "Enable reminders, analytics, and workflows to scale without manual overhead.",
+                  },
+                ].map((step, index, steps) => (
+                  <Fragment key={step.title}>
+                    <motion.article
+                      variants={fadeUp}
+                      whileHover={{ y: -6 }}
+                      className="glass-card neon-card relative rounded-3xl p-6 pt-14"
+                    >
+                      <motion.span
+                        animate={{ boxShadow: ["0 0 0 0 rgba(79,141,253,0.4)", "0 0 0 10px rgba(79,141,253,0)"] }}
+                        transition={{ duration: 2.2, repeat: Number.POSITIVE_INFINITY, delay: index * 0.35 }}
+                        className="absolute left-6 top-5 inline-flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-[#4F8DFD] to-[#5FA0FF] text-sm font-semibold text-white"
+                      >
+                        {index + 1}
+                      </motion.span>
+                      <h3 className="text-lg font-semibold text-[#1F2D3D]">{step.title}</h3>
+                      <p className="mt-2 text-sm leading-7 text-[#6B7A90]">{step.description}</p>
+                    </motion.article>
 
-              {[
-                {
-                  title: "Add your PG",
-                  description: "Create branches, room structures, and initial setup in guided steps.",
-                },
-                {
-                  title: "Manage tenants and operations",
-                  description: "Track occupancy, rent, bills, complaints, and daily activities from one dashboard.",
-                },
-                {
-                  title: "Automate and grow your business",
-                  description: "Enable reminders, analytics, and workflows to scale without manual overhead.",
-                },
-              ].map((step, index) => (
-                <motion.article
-                  key={step.title}
-                  variants={fadeUp}
-                  className="glass-card relative rounded-3xl p-6 md:pt-12"
-                >
-                  <span className="absolute left-4 top-5 inline-flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-[#4F8DFD] to-[#5FA0FF] text-xs font-semibold text-white md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2">
-                    {index + 1}
-                  </span>
-                  <h3 className="text-lg font-semibold">{step.title}</h3>
-                  <p className="mt-2 text-sm leading-7 text-[#6B7A90]">{step.description}</p>
-                </motion.article>
-              ))}
+                    {index < steps.length - 1 && (
+                      <div className="hidden md:flex md:items-center md:justify-center">
+                        <motion.div
+                          className="relative flex h-8 w-8 items-center justify-center rounded-full border border-[#BFD5FF] bg-white text-[#3F7EF5] shadow-[0_0_0_1px_rgba(95,160,255,0.18),0_10px_24px_-14px_rgba(63,126,245,0.6)]"
+                          animate={{ y: [0, -2, 0] }}
+                          transition={{ duration: 1.7, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
+                        >
+                          <motion.span
+                            className="absolute -z-10 h-8 w-8 rounded-full bg-[#4F8DFD]/20 blur-md"
+                            animate={{ scale: [0.9, 1.2, 0.9], opacity: [0.6, 0.25, 0.6] }}
+                            transition={{ duration: 2.2, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
+                          />
+                          <ArrowRight className="h-4 w-4" />
+                        </motion.div>
+                      </div>
+                    )}
+                  </Fragment>
+                ))}
+              </div>
             </div>
           </motion.div>
         </div>
       </section>
-
       <section className="relative overflow-hidden bg-white py-24" id="benefits">
-        <div className="mx-auto w-full max-w-7xl px-6 md:px-8">
+        <div className="mx-auto w-full max-w-[1700px] px-6 md:px-8">
           <motion.div
             initial="hidden"
             whileInView="show"
@@ -1214,7 +988,7 @@ export default function Home() {
       </section>
 
       <section className="relative bg-[#F3F8FF] py-24" id="testimonials">
-        <div className="mx-auto w-full max-w-7xl px-6 md:px-8">
+        <div className="mx-auto w-full max-w-[1700px] px-6 md:px-8">
           <motion.div
             initial="hidden"
             whileInView="show"
@@ -1300,7 +1074,7 @@ export default function Home() {
       </section>
 
       <section className="relative bg-white py-24" id="pricing">
-        <div className="mx-auto w-full max-w-7xl px-6 md:px-8">
+        <div className="mx-auto w-full max-w-[1700px] px-6 md:px-10 2xl:px-16">
           <motion.div
             initial="hidden"
             whileInView="show"
@@ -1311,31 +1085,38 @@ export default function Home() {
               Pricing
             </motion.p>
             <motion.h2 variants={fadeUp} className="section-title mt-3 font-semibold">
-              Flexible Plans For Every Stage
+              Flexible Plans With No Monthly Subscription
             </motion.h2>
+            <motion.p variants={fadeUp} className="section-copy mt-4 text-base">
+              Choose one-time onboarding, annual licensing, or a custom enterprise contract.
+            </motion.p>
 
-            <div className="mt-12 grid gap-6 lg:grid-cols-3">
-              {plans.map((plan) => (
+            <div className="mt-12 grid gap-6 xl:grid-cols-3">
+              {plans.map((plan, index) => (
                 <motion.article
                   key={plan.name}
                   variants={fadeUp}
-                  whileHover={{ y: -6 }}
+                  whileHover={{ y: -6, scale: 1.01 }}
                   className={cn(
-                    "relative rounded-[1.8rem] border p-7",
+                    "neon-card relative rounded-[1.8rem] border p-7",
                     plan.popular
-                      ? "border-[#4F8DFD]/45 bg-gradient-to-b from-[#F8FBFF] to-white shadow-[0_26px_60px_-34px_rgba(63,126,245,0.5)]"
-                      : "border-[#E5EEFF] bg-white shadow-[0_22px_46px_-38px_rgba(63,126,245,0.38)]",
+                      ? "border-[#4F8DFD]/60 bg-gradient-to-b from-[#F5FAFF] to-white shadow-[0_0_0_1px_rgba(95,160,255,0.2),0_30px_60px_-35px_rgba(63,126,245,0.6)]"
+                      : "border-[#DDE9FF] bg-white shadow-[0_18px_45px_-35px_rgba(63,126,245,0.45)]",
                   )}
                 >
+                  <span className="mb-4 inline-flex rounded-full border border-[#C7DBFF] bg-[#EFF5FF] px-3 py-1 text-xs font-semibold text-[#3F7EF5]">
+                    {index === 0 ? "One-Time" : index === 1 ? "Annual" : "Contract"}
+                  </span>
+
                   {plan.popular && (
                     <span className="absolute right-5 top-5 rounded-full bg-gradient-to-r from-[#4F8DFD] to-[#5FA0FF] px-3 py-1 text-xs font-semibold text-white">
                       Most Popular
                     </span>
                   )}
 
-                  <h3 className="text-xl font-semibold text-[#1F2D3D]">{plan.name}</h3>
-                  <p className="mt-3 text-3xl font-semibold tracking-tight text-[#1F2D3D]">{plan.price}</p>
-                  <p className="mt-2 text-sm leading-7 text-[#6B7A90]">{plan.description}</p>
+                  <h3 className="text-2xl font-semibold text-[#1F2D3D]">{plan.name}</h3>
+                  <p className="mt-3 text-4xl font-semibold tracking-tight text-[#1F2D3D]">{plan.price}</p>
+                  <p className="mt-3 text-sm leading-7 text-[#6B7A90]">{plan.description}</p>
 
                   <ul className="mt-6 space-y-2 text-sm text-[#42546C]">
                     {plan.features.map((feature) => (
@@ -1346,7 +1127,7 @@ export default function Home() {
                     ))}
                   </ul>
 
-                  <div className="mt-7 space-y-2">
+                  <div className="mt-8 space-y-2">
                     <a
                       href="#contact"
                       className={cn(
@@ -1354,13 +1135,13 @@ export default function Home() {
                         plan.popular ? "gradient-button" : "secondary-button",
                       )}
                     >
-                      Start Free Trial
+                      {index === 2 ? "Request Proposal" : "Book Demo"}
                     </a>
                     <a
                       href="#contact"
                       className="inline-flex w-full items-center justify-center rounded-xl border border-[#D9E7FF] px-4 py-3 text-sm font-medium text-[#3F7EF5]"
                     >
-                      Book Demo
+                      Compare Plan
                     </a>
                   </div>
                 </motion.article>
@@ -1369,7 +1150,6 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
-
       <section className="relative bg-[#F3F8FF] py-24" id="faq">
         <div className="mx-auto w-full max-w-4xl px-6 md:px-8">
           <motion.div
@@ -1428,7 +1208,7 @@ export default function Home() {
       </section>
 
       <section id="contact" className="relative overflow-hidden bg-white py-24">
-        <div className="mx-auto w-full max-w-7xl px-6 md:px-8">
+        <div className="mx-auto w-full max-w-[1700px] px-6 md:px-8">
           <motion.div
             initial={{ opacity: 0, y: 26 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -1483,7 +1263,7 @@ export default function Home() {
       </section>
 
       <footer className="border-t border-[#E5EEFF] bg-[#F7FAFF] py-14">
-        <div className="mx-auto grid w-full max-w-7xl gap-10 px-6 md:grid-cols-2 md:px-8 lg:grid-cols-5">
+        <div className="mx-auto grid w-full max-w-[1700px] gap-10 px-6 md:grid-cols-2 md:px-8 lg:grid-cols-5">
           <div className="lg:col-span-2">
             <div className="flex items-center gap-3">
               <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-[#4F8DFD] to-[#5FA0FF] text-white">
@@ -1556,11 +1336,19 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="mx-auto mt-10 w-full max-w-7xl border-t border-[#E5EEFF] px-6 pt-6 text-xs text-[#7D8BA0] md:px-8">
+        <div className="mx-auto mt-10 w-full max-w-[1700px] border-t border-[#E5EEFF] px-6 pt-6 text-xs text-[#7D8BA0] md:px-8">
           © {new Date().getFullYear()} PG Manager Pro. All rights reserved.
         </div>
       </footer>
     </main>
   );
 }
+
+
+
+
+
+
+
+
 
